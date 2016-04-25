@@ -34,7 +34,8 @@ int main(int argc, char const *argv[])
 	//int k = atoi(argv[2]);
 	fstream file;
 	file.open(filename, fstream::in);
-	std::vector<Sample *> vectorofsamples;
+	std::vector<Sample> vectorofsamples;
+	//std::vector<Sample>::iterator iter=vectorofsamples.begin();
 	string row;
 	while(file.good())
 	{
@@ -77,6 +78,17 @@ int main(int argc, char const *argv[])
 			}
 			ite++;
 		}
+		float num=atof(number.c_str());
+		featvector.push_back(num);
+		int l=atoi(label.c_str());
+		featvector.erase(featvector.begin());
+		Sample sam(l, featvector);
+		sam.show();
+		vectorofsamples.push_back(sam);
 	}
+	/*while(iter!=vectorofsamples.end())
+	{
+		cout<<*iter<<endl;
+	}*/
 	file.close();
 }

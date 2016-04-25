@@ -20,6 +20,7 @@ public:
 	Sample(int l, std::vector<float> f);
 	int getlabel();
 	int getfeaturessize();
+	void show();
 	//std::vector<float>::iterator getfeatures();
-	~Sample();
+	//~Sample();
 };
