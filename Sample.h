@@ -1,4 +1,5 @@
 #pragma once
+#include <vector>
 
 /*
 - Stwórz klasę `Sample`, zawierającą:
@@ -8,6 +9,17 @@
 - stwórz też dla nich *gettery*.
 */
 
-class Sample {
-	
+class Sample 
+{
+	int label;
+	std::vector<float> features;
+
+public:
+	Sample()
+	{}
+	Sample(int l, std::vector<float> f);
+	int getlabel();
+	int getfeaturessize();
+	//std::vector<float>::iterator getfeatures();
+	~Sample();
 };

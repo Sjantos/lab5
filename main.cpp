@@ -2,9 +2,11 @@
 #include "Dataset.h"
 #include "Prediction.h"
 
+#include <iostream>
 #include <stdlib.h>
 #include <string>
 #include <vector>
+#include <fstream>
 
 /*
 - Jako argumenty wiersza poleceń programu, przekaż nazwę pliku oraz liczbę całkowitą `k`,
@@ -28,6 +30,33 @@ vector <Prediction *> knn(Dataset *train, Dataset *test, int k);
 
 int main(int argc, char const *argv[])
 {
-//	int k = atoi(argv[2]);
-//	string filename = argv[1];
+	string filename = argv[1];
+	//int k = atoi(argv[2]);
+	fstream file;
+	file.open(filename, fstream::in);
+	std::vector<Sample> vectorofsamples;
+	string row;
+	while(file.good())
+	{
+		getline(file, row);
+		//cout<<row<<endl;
+		string::iterator it=row.begin();
+		bool comma=false;
+		string label="", feat=""; char com=',';
+		while(it!=row.end())
+		{
+			if(*it==com) comma=true;
+			if(comma)
+			{
+				feat+=*it;
+			}
+			else
+			{
+				label+=*it;
+			}
+			it++;
+		}
+		cout<<"LABEL "<<label<<"    FEAT "<<feat<<endl;
+	}
+	file.close();
 }
