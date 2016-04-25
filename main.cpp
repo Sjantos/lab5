@@ -34,7 +34,7 @@ int main(int argc, char const *argv[])
 	//int k = atoi(argv[2]);
 	fstream file;
 	file.open(filename, fstream::in);
-	std::vector<Sample> vectorofsamples;
+	std::vector<Sample *> vectorofsamples;
 	string row;
 	while(file.good())
 	{
@@ -56,7 +56,27 @@ int main(int argc, char const *argv[])
 			}
 			it++;
 		}
-		cout<<"LABEL "<<label<<"    FEAT "<<feat<<endl;
+		//cout<<"LABEL "<<label<<"    FEAT "<<feat<<endl;
+
+		std::vector<float> featvector;
+		string::iterator ite=feat.begin();
+		string number="";
+		while(ite!=feat.end())
+		{
+			if(*ite==com)
+			{
+				//string::size_type sz;
+				float num=atof(number.c_str());
+				featvector.push_back(num);
+				//cout<<num<<endl;
+				number="";
+			}
+			else
+			{
+				number+=*ite;
+			}
+			ite++;
+		}
 	}
 	file.close();
 }
