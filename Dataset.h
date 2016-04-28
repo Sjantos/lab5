@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include "Sample.h"
+#include <cstdio>
 
 /*
 - Stwórz klasę `Dataset`, zawierającą:
@@ -11,10 +12,13 @@
 
 class Dataset 
 {
-	std::vector<Sample> Dataset_vector;
+public:
+	std::vector<Sample> dataset_vector;
+	int samplesize=0;
 
 public:
 	Dataset()
 	{};
 	void push_back(Sample s);
+	void show();
 };

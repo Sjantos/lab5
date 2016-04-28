@@ -31,7 +31,7 @@ void Sample::show()
 	printf("\n");
 }
 
-/*std::vector<float>::iterator Sample::getfeatures()
+std::vector<float> Sample::getfeatures()
 {
-	return features.begin();
-}*/
+	return features;
+}

@@ -21,6 +21,6 @@ public:
 	int getlabel();
 	int getfeaturessize();
 	void show();
-	//std::vector<float>::iterator getfeatures();
+	std::vector<float> getfeatures();
 	//~Sample();
 };

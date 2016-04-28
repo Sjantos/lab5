@@ -7,6 +7,8 @@
 #include <string>
 #include <vector>
 #include <fstream>
+#include <time.h>
+#include <cmath>
 
 /*
 - Jako argumenty wiersza poleceń programu, przekaż nazwę pliku oraz liczbę całkowitą `k`,
@@ -26,21 +28,49 @@
 
 using namespace std;
 
+void fileload(string filename);
+void filldataset(int percent, Dataset *set);
+double distance(Sample s1, Sample s2);
+void sort( double tab[][2], int left, int right );
+
 vector <Prediction *> knn(Dataset *train, Dataset *test, int k);
+std::vector<Sample> vectorofsamples;
+Dataset train, test;
+int numberofsamples;
+
+
+
 
 int main(int argc, char const *argv[])
 {
 	string filename = argv[1];
 	//int k = atoi(argv[2]);
+	fileload(filename);
+	srand(time(NULL));
+	numberofsamples=vectorofsamples.size();
+	//cout<<numberofsamples<<endl;
+	int perc=numberofsamples/5;
+	//cout<<"perc "<<perc<<endl;
+	filldataset(perc, &train);
+	//cout<<endl<<endl<<numberofsamples;
+	filldataset(numberofsamples, &test);
+	train.show();
+	test.show();
+
+
+
+
+
+}
+
+void fileload(string filename)
+{
 	fstream file;
 	file.open(filename, fstream::in);
-	std::vector<Sample> vectorofsamples;
-	//std::vector<Sample>::iterator iter=vectorofsamples.begin();
 	string row;
 	while(file.good())
 	{
 		getline(file, row);
-		//cout<<row<<endl;
 		string::iterator it=row.begin();
 		bool comma=false;
 		string label="", feat=""; char com=',';
@@ -57,7 +87,6 @@ int main(int argc, char const *argv[])
 			}
 			it++;
 		}
-		//cout<<"LABEL "<<label<<"    FEAT "<<feat<<endl;
 
 		std::vector<float> featvector;
 		string::iterator ite=feat.begin();
@@ -66,10 +95,8 @@ int main(int argc, char const *argv[])
 		{
 			if(*ite==com)
 			{
-				//string::size_type sz;
 				float num=atof(number.c_str());
 				featvector.push_back(num);
-				//cout<<num<<endl;
 				number="";
 			}
 			else
@@ -83,12 +110,84 @@ int main(int argc, char const *argv[])
 		int l=atoi(label.c_str());
 		featvector.erase(featvector.begin());
 		Sample sam(l, featvector);
-		sam.show();
+		//sam.show();
 		vectorofsamples.push_back(sam);
 	}
-	/*while(iter!=vectorofsamples.end())
-	{
-		cout<<*iter<<endl;
-	}*/
 	file.close();
 }
+
+void filldataset(int percent, Dataset *set)
+{
+	for(int i=0; i<percent; i++)
+	{
+		int index=rand()%numberofsamples;
+		set->push_back(vectorofsamples[index]);
+		vectorofsamples.erase(vectorofsamples.begin()+index);
+		numberofsamples--;
+	}
+}
+
+double distance(Sample s1, Sample s2)
+{
+	double distance=0;
+	for(int i=0; i<s1.getfeaturessize(); i++)
+	{
+		distance+=pow(s1.getfeatures()[i]-s2.getfeatures()[i],2);
+	}
+	distance=sqrt(distance);
+
+	return distance;
+}
+
+vector <Prediction *> knn(Dataset *train, Dataset *test, int k)
+{
+	std::vector<Prediction *> predictions;
+	for(unsigned int i=0; i<test->dataset_vector.size(); i++)
+	{
+		Prediction p(test->dataset_vector[i].getlabel(), test->dataset_vector[i].getfeatures());
+		predictions.push_back(&p);
+		/*double distancetab[train->dataset_vector.size()][2];
+		for(unsigned int j=0; j<test->dataset_vector.size(); j++)
+		{
+			distance[j][0]=distance(*train->dataset_vector[j], *test->dataset_vector[i]);
+			distance[j][1]=train->dataset_vector[j]->getlabel();
+
+		}
+		sort(distance, 0, train->dataset_vector.size()-1);*/
+	}
+
+	return predictions;
+}
+
+void sort( double tab[][2], int left, int right )
+ {
+    int i = left;
+    int j = right;
+    double x = tab[( left + right ) / 2 ][0];
+    do
+    {
+    	while( tab[ i ][0] < x ) i++;
+         
+        while( tab[ j ][0] > x ) j--;        
+        if( i <= j )
+        {
+            swap( tab[ i ][0], tab[ j ][0] );
+            swap( tab[ i ][1], tab[ j ][1] );            
+            i++;
+            j--;
+        }
+     }while( i <= j );
+     
+    if( left < j ) sort( tab, left, j );
+    if( right > i ) sort( tab, i, right );
+     
+ }
+
+ /*int popular(double tab[][2], int k)
+ {
+ 	int size=0;
+ 	for(int i=0; i<k; i++) if(size<tab[i][1]) size=tab[i][1];
+ 	int t[size+1];
+ 	for(int i=0; i<size+1; i++) t[i]=0;
+
+ }*/
