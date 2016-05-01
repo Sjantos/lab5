@@ -11,6 +11,7 @@
 
 class Sample 
 {
+protected:
 	int label;
 	std::vector<float> features;
 

@@ -9,6 +9,7 @@
 #include <fstream>
 #include <time.h>
 #include <cmath>
+#include <cstdio>
 
 /*
 - Jako argumenty wiersza poleceń programu, przekaż nazwę pliku oraz liczbę całkowitą `k`,
@@ -31,12 +32,13 @@ using namespace std;
 void fileload(string filename);
 void filldataset(int percent, Dataset *set);
 double distance(Sample s1, Sample s2);
+int popular(double tab[][2], int k);
 void sort( double tab[][2], int left, int right );
 
 vector <Prediction *> knn(Dataset *train, Dataset *test, int k);
-std::vector<Sample> vectorofsamples;
+std::vector<Sample *> vectorofsamples;
 Dataset train, test;
-int numberofsamples;
+int numberofsamples, numberofsamples1;
 
 
 
@@ -44,19 +46,26 @@ int numberofsamples;
 int main(int argc, char const *argv[])
 {
 	string filename = argv[1];
-	//int k = atoi(argv[2]);
+	int k = atoi(argv[2]);
 	fileload(filename);
 	srand(time(NULL));
-	numberofsamples=vectorofsamples.size();
+	numberofsamples1=numberofsamples=vectorofsamples.size();
 	//cout<<numberofsamples<<endl;
 	int perc=numberofsamples/5;
 	//cout<<"perc "<<perc<<endl;
 	filldataset(perc, &train);
 	//cout<<endl<<endl<<numberofsamples;
 	filldataset(numberofsamples, &test);
-	train.show();
-	test.show();
+	//train.show();
+	//test.show();
 
+	std::vector<Prediction *> predictions=knn(&train, &test, k);
+	//cout<<endl<<endl<<train.size()<<"  "<<test.size()<<endl<<endl;
+	//cout<<"Qualification: "<<Prediction::accuracy(predictions);
+	cout<<"File name: "<<filename<<endl;
+	cout<<"Number of samples "<<numberofsamples1<<endl;
+	cout<<"Number of features: "<<train.dataset_vector[0]->getfeaturessize()<<endl;
+	printf("Qualification: %f \n", Prediction::accuracy(predictions));
 
 
 
@@ -109,9 +118,9 @@ void fileload(string filename)
 		featvector.push_back(num);
 		int l=atoi(label.c_str());
 		featvector.erase(featvector.begin());
-		Sample sam(l, featvector);
+		//Sample sam(l, featvector);
 		//sam.show();
-		vectorofsamples.push_back(sam);
+		vectorofsamples.push_back(new Sample(l, featvector));
 	}
 	file.close();
 }
@@ -142,18 +151,23 @@ double distance(Sample s1, Sample s2)
 vector <Prediction *> knn(Dataset *train, Dataset *test, int k)
 {
 	std::vector<Prediction *> predictions;
+
 	for(unsigned int i=0; i<test->dataset_vector.size(); i++)
 	{
-		Prediction p(test->dataset_vector[i].getlabel(), test->dataset_vector[i].getfeatures());
-		predictions.push_back(&p);
-		/*double distancetab[train->dataset_vector.size()][2];
-		for(unsigned int j=0; j<test->dataset_vector.size(); j++)
+		double distancetab[train->dataset_vector.size()][2];
+		for(unsigned int j=0; j<train->dataset_vector.size(); j++)
 		{
-			distance[j][0]=distance(*train->dataset_vector[j], *test->dataset_vector[i]);
-			distance[j][1]=train->dataset_vector[j]->getlabel();
+			distancetab[j][0]=distance(*train->dataset_vector[j], *test->dataset_vector[i]);
+			distancetab[j][1]=train->dataset_vector[j]->getlabel();
 
 		}
-		sort(distance, 0, train->dataset_vector.size()-1);*/
+		sort(distancetab, 0, train->dataset_vector.size()-1);
+		//cout<<"predi "<<popular(distancetab, k)<<"  label "<<test->dataset_vector[i].getlabel()<<endl;
+		//Prediction p(test->dataset_vector[i].getlabel(), test->dataset_vector[i].getfeatures());//, popular(distancetab, k));
+		//cout<<p.prediction;
+		//predictions.push_back(&p);
+		predictions.push_back(new Prediction(test->dataset_vector[i]->getlabel(), test->dataset_vector[i]->getfeatures()));
+		predictions[i]->prediction=popular(distancetab, k);
 	}
 
 	return predictions;
@@ -183,11 +197,31 @@ void sort( double tab[][2], int left, int right )
      
  }
 
- /*int popular(double tab[][2], int k)
+ int popular(double tab[][2], int k)
  {
  	int size=0;
- 	for(int i=0; i<k; i++) if(size<tab[i][1]) size=tab[i][1];
+ 	for(int i=0; i<k; i++)
+ 	{
+		if(size<tab[i][1]) size=tab[i][1];
+ 	}
  	int t[size+1];
- 	for(int i=0; i<size+1; i++) t[i]=0;
+ 	for(int i=0; i<size+1; i++) 
+ 	{
+		t[i]=0;
+ 	}
+ 	for(int i=0; i<k; i++)
+ 	{
+		t[(int)tab[i][1]]++;
+ 	}
+	int x, num=0;
+	for(int i=0; i<size+1; i++)
+	{
+		if(num<t[i])
+		{
+			num=t[i];
+			x=i;
+		}
+	}
 
- }*/
+	return x;
+ }

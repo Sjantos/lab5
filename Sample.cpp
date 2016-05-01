@@ -4,8 +4,8 @@
 
 Sample::Sample(int l, std::vector<float> f)
 {
-	label=l;
-	features=f;
+	this->label=l;
+	this->features=f;
 }
 
 int Sample::getlabel()
@@ -25,7 +25,7 @@ void Sample::show()
 	std::vector<float>::iterator it=features.begin();
 	while(it!=features.end())
 	{
-		printf(" %f", *it);//cout<<" "<<*it;
+		printf(" %.2f", *it);//cout<<" "<<*it;
 		it++;
 	}
 	printf("\n");

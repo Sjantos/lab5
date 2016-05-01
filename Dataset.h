@@ -13,12 +13,13 @@
 class Dataset 
 {
 public:
-	std::vector<Sample> dataset_vector;
+	std::vector<Sample *> dataset_vector;
 	int samplesize=0;
 
 public:
 	Dataset()
 	{};
-	void push_back(Sample s);
+	void push_back(Sample* s);
 	void show();
+	int size();
 };
